@@ -33,10 +33,12 @@ public class Camino {
 			Peregrino = new Peregrino(barca, i);
 			System.out.println("EL PEREGRINO Nº: " + i
 					+ "  ESTÁ LISTO PARA ERMPEZAR A ANDAR");
+
 			Peregrino.start();
-			//Peregrino.join();
+			// Peregrino.join();
 
 		}
+		System.out.println("");
 
 		Thread Barquero = new Barquero(barca);
 		Barquero.start();
@@ -44,6 +46,7 @@ public class Camino {
 	}
 }
 
+// --------------------------------------------------------------------------------------------------------------------------------------//
 // --------------------------------------------------------------------------------------------------------------------------------------//
 
 /**
@@ -67,18 +70,24 @@ class Peregrino extends Thread {
 	}
 
 	public void run() {
-		
-		//double retardo = (double) Math.floor(Math.random() * 4000 + 1);
-		
+
+		// double tiempo = (double) Math.floor(Math.random() * 4000 + 1);
+
 		try {
 			Thread.sleep(2000);
-			System.out.println("EL PEREGRINO " + id + "Ha LLEGADO AL LAGO");
+			System.out.println("EL PEREGRINO " + id + " Ha LLEGADO AL LAGO");
 			barca.hayPlaza();
-			Thread.sleep(500);
-			System.out.println("EL PEREGRINO " + id + " HA LLEGADO A SANTIAGO");
-			
+			// System.out.println("EL PEREGRINO " + id +
+			// " ANDA HASTA SANTIAGO");
+			Thread.sleep(1000);
+			//System.out.println("");
+			System.out.println("EL PEREGRINO " + id
+					+ " HA LLEGADO A SANTIAGO ------------------------>  Nº: "
+					+ id);
+			//System.out.println("");
+
 		} catch (Exception e) {
-			
+
 		}
 
 	}
@@ -96,7 +105,8 @@ class Peregrino extends Thread {
 class Barquero extends Thread {
 
 	Barca barca;
-	//Camino cam;
+
+	// Camino cam;
 
 	public Barquero(Barca barca) {
 		this.barca = barca;
@@ -105,21 +115,17 @@ class Barquero extends Thread {
 	public void run() {
 
 		for (int i = 0; i < Camino.numperegrinos; i++) {
-		
+
 			try {
-				//System.out.println("Barquero espera antes de empezar..");
+
 				sleep(500);
 				barca.hacerviaje();
-				//System.out.println("EMPIEZA EL VIAJE");
-				sleep(500);
-				System.out.println("SE HA CRUZADO EL LAGO");
-				sleep(100);
-				
+
 			} catch (Exception e) {
-				
+
 			}
 		}
-		
+
 	}
 
 }
@@ -135,14 +141,43 @@ class Barca {
 
 	private int haySitio = 0;
 	HashSet<Integer> usuariosBarca;
-	Peregrino pere ;
+	Peregrino pere;
 
 	public Barca() {
 
 		usuariosBarca = new HashSet<Integer>();
 	}
 
-	public synchronized void hacerviaje() {
+	public synchronized void hacerviaje() throws InterruptedException {
+
+		while (haySitio == 0) {
+			try {
+				System.out.println("BARQUERO ESPERA PEREGRINOS....");
+				System.out.println("");
+				this.wait();
+			} catch (InterruptedException e) {
+				e.printStackTrace();
+			}
+		}
+
+		// usuariosBarca.add((int) pere.getId());
+
+		System.out.println("EL BARQUERO HA COJIDO PEREGRINO");
+		System.out.println("    NAVEGANDO...");
+		Thread.sleep(500);
+		System.out.println("SE HA CRUZADO EL LAGO");
+
+		System.out.println("    VOLVIENDO...");
+		//System.out.println("");
+		Thread.sleep(100);
+
+		haySitio++;
+
+		notify();
+
+	}
+
+	public synchronized void hayPlaza() {
 
 		while (haySitio != 0) {
 			try {
@@ -151,26 +186,8 @@ class Barca {
 				e.printStackTrace();
 			}
 		}
-		System.out.println("NAVEGANDO...");
-		usuariosBarca.add((int) pere.getId());
-		
-		haySitio++;
-		//System.out.println("SE HA ALIMENTADO : " + haySitio);
-		notify();
-
-	}
-
-	public synchronized void hayPlaza() {
-
-		while (haySitio == 0) { 
-			try {
-				this.wait();
-			} catch (InterruptedException e) {
-				e.printStackTrace();
-			}
-		}
 		haySitio--;
-		//System.out.println("SE HA COMIDO: " + haySitio);
+
 		notify();
 
 	}
