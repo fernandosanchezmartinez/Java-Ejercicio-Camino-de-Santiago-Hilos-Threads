@@ -22,7 +22,8 @@ public class Camino {
 
 	public static void main(String[] args) throws InterruptedException {
 
-		System.out.println("ESCRIBE EL NUMERO DE PEREGRINOS");
+		System.out.println("                      <----------- CAMINO DE SANTIAGO -------------->");
+		System.out.println("ESCRIBE EL NÚMERO DE PEREGRINOS:");
 		numperegrinos = in.nextInt();
 
 		Barca barca = new Barca();
@@ -32,7 +33,7 @@ public class Camino {
 		for (int i = 0; i < numperegrinos; i++) {
 			Peregrino = new Peregrino(barca, i);
 			System.out.println("EL PEREGRINO Nº: " + i
-					+ "  ESTÁ LISTO PARA ERMPEZAR A ANDAR");
+					+ "  ESTÁ LISTO PARA EMPEZAR A ANDAR");
 
 			Peregrino.start();
 			// Peregrino.join();
@@ -125,6 +126,8 @@ class Barquero extends Thread {
 
 			}
 		}
+		System.out.println("");
+		System.out.println("  ---> BARQUERO:  HAN NAVEGADO TODOS LOS PEREGRINOS");
 
 	}
 
@@ -165,7 +168,7 @@ class Barca {
 		System.out.println("EL BARQUERO HA COJIDO PEREGRINO");
 		System.out.println("    NAVEGANDO...");
 		Thread.sleep(500);
-		System.out.println("SE HA CRUZADO EL LAGO");
+		System.out.println("    SE HA CRUZADO EL LAGO");
 
 		System.out.println("    VOLVIENDO...");
 		//System.out.println("");
