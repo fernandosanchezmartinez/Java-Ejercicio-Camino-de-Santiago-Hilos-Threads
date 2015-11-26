@@ -1,3 +1,4 @@
+import java.util.HashSet;
 import java.util.Scanner;
 
 /**
@@ -19,7 +20,7 @@ public class Camino {
 	static int numperegrinos;
 	static Scanner in = new Scanner(System.in);
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws InterruptedException {
 
 		System.out.println("ESCRIBE EL NUMERO DE PEREGRINOS");
 		numperegrinos = in.nextInt();
@@ -31,8 +32,9 @@ public class Camino {
 		for (int i = 0; i < numperegrinos; i++) {
 			Peregrino = new Peregrino(barca, i);
 			System.out.println("EL PEREGRINO Nº: " + i
-					+ "ESTÁ LISTO PARA ERMPEZAR A ANDAR");
+					+ "  ESTÁ LISTO PARA ERMPEZAR A ANDAR");
 			Peregrino.start();
+			//Peregrino.join();
 
 		}
 
@@ -65,8 +67,15 @@ class Peregrino extends Thread {
 	}
 
 	public void run() {
+		
+		//double retardo = (double) Math.floor(Math.random() * 4000 + 1);
+		
 		try {
-			Thread.sleep(arg0);
+			Thread.sleep(2000);
+			System.out.println("EL PEREGRINO " + id + "Ha LLEGADO AL LAGO");
+			barca.hayPlaza();
+			Thread.sleep(500);
+			System.out.println("EL PEREGRINO " + id + " HA LLEGADO A SANTIAGO");
 			
 		} catch (Exception e) {
 			
@@ -86,7 +95,8 @@ class Peregrino extends Thread {
  */
 class Barquero extends Thread {
 
-	private Barca barca;
+	Barca barca;
+	//Camino cam;
 
 	public Barquero(Barca barca) {
 		this.barca = barca;
@@ -94,17 +104,22 @@ class Barquero extends Thread {
 
 	public void run() {
 
+		for (int i = 0; i < Camino.numperegrinos; i++) {
 		
-		try {
-			Thread.sleep(500);
-			barca.empezarviaje();
-			Thread.sleep(500);
-			System.out.println("SE HA CRUZADO EL LAGO");
-			Thread.sleep(100);
-			
-		} catch (Exception e) {
-			
+			try {
+				//System.out.println("Barquero espera antes de empezar..");
+				sleep(500);
+				barca.hacerviaje();
+				//System.out.println("EMPIEZA EL VIAJE");
+				sleep(500);
+				System.out.println("SE HA CRUZADO EL LAGO");
+				sleep(100);
+				
+			} catch (Exception e) {
+				
+			}
 		}
+		
 	}
 
 }
@@ -119,12 +134,15 @@ class Barquero extends Thread {
 class Barca {
 
 	private int haySitio = 0;
+	HashSet<Integer> usuariosBarca;
+	Peregrino pere ;
 
 	public Barca() {
 
+		usuariosBarca = new HashSet<Integer>();
 	}
 
-	public synchronized void empezarviaje() {
+	public synchronized void hacerviaje() {
 
 		while (haySitio != 0) {
 			try {
@@ -133,13 +151,16 @@ class Barca {
 				e.printStackTrace();
 			}
 		}
+		System.out.println("NAVEGANDO...");
+		usuariosBarca.add((int) pere.getId());
+		
 		haySitio++;
 		//System.out.println("SE HA ALIMENTADO : " + haySitio);
-		notifyAll();
+		notify();
 
 	}
 
-	public synchronized void iniciarViaje() {
+	public synchronized void hayPlaza() {
 
 		while (haySitio == 0) { 
 			try {
@@ -150,7 +171,7 @@ class Barca {
 		}
 		haySitio--;
 		//System.out.println("SE HA COMIDO: " + haySitio);
-		notifyAll();
+		notify();
 
 	}
 
